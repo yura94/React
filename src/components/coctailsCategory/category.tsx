@@ -1,13 +1,12 @@
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 
-export default function Breweries() {
+export default function CoctailCategory() {
   const breweries: string[] = [
-    "Pravda",
-    "First Dnipro Brewery",
-    "Fanatic Brewing Center",
-    "CastleHill Brewery",
-    "Kyiv Local Brewery",
+    "Alcoholic",
+    "Non Alcoholic",
+    "Ordinary Drink",
+    "Cocktail",
   ];
 
   return (
@@ -19,8 +18,12 @@ export default function Breweries() {
         p: 2,
       }}
     >
-      {breweries.map((brewery) => {
-        return <Button variant="outlined">{brewery}</Button>;
+      {breweries.map((coctail, index) => {
+        return (
+          <Button key={index} variant="outlined">
+            {coctail}
+          </Button>
+        );
       })}
     </Box>
   );
