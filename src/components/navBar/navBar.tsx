@@ -6,10 +6,12 @@ import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
+import Basket from "./basket";
 
 export default function NavBar() {
   const cocktails = useSelector((state: RootState) => state.cocktails);
   const [ordersCount, setOrdersCount] = useState(0);
+  const [isBasketOpen, setIsBasketOpen] = useState(false);
 
   useEffect(() => {
     let cocktailsOrderCount: number = 0;
@@ -17,6 +19,7 @@ export default function NavBar() {
       setOrdersCount((cocktailsOrderCount += item.countOrder));
     }
   }, [cocktails]);
+
   return (
     <Box sx={{ flexGrow: 1, color: "transparent" }}>
       <AppBar position="static" sx={{ background: "wheat" }}>
@@ -28,8 +31,14 @@ export default function NavBar() {
           >
             Coctails
           </Typography>
+
           <Box sx={{ display: " flex" }}>
-            <ShoppingBasketIcon />
+            <ShoppingBasketIcon
+              sx={{ cursor: " pointer" }}
+              onClick={() => {
+                setIsBasketOpen(true);
+              }}
+            />
             {ordersCount ? (
               <Typography
                 sx={{
@@ -40,6 +49,12 @@ export default function NavBar() {
               </Typography>
             ) : null}
           </Box>
+          <Basket
+            isBasketOpen={isBasketOpen}
+            onClose={() => {
+              setIsBasketOpen(false);
+            }}
+          />
         </Toolbar>
       </AppBar>
     </Box>
