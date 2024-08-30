@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Box, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { fetchUser } from "../../store/usersSlice";
 
 interface RegisterFormProps {
   onRegister: () => void;
 }
 
 function RegisterForm({ onRegister }: RegisterFormProps) {
+  const dispatch = useDispatch<AppDispatch>();
+
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string()
@@ -19,6 +24,7 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
     const registerData = {
       email: e.email,
       password: e.password,
+      name: e.name,
     };
 
     if (e.password !== e.confirmPassword) {
@@ -38,6 +44,7 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
       const data = await response.json();
 
       if (response.ok) {
+        dispatch(fetchUser(registerData));
         onRegister();
       } else {
         alert("Registration failed: " + data.message);
@@ -69,6 +76,7 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
       >
         <Formik
           initialValues={{
+            name: "",
             email: "",
             password: "",
             confirmPassword: "",
@@ -87,6 +95,18 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
                 pb: "10px",
               }}
             >
+              <label htmlFor="email">Name</label>
+              <Field type="text" name="name" />
+              <ErrorMessage name="name" component="div" />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                pb: "10px",
+              }}
+            >
               <label htmlFor="email">Email</label>
               <Field type="email" name="email" />
               <ErrorMessage name="email" component="div" />
@@ -97,6 +117,7 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
                 display: "flex",
                 justifyContent: "space-between",
                 flexDirection: "column",
+                pb: "10px",
               }}
             >
               <label htmlFor="password">Password</label>
@@ -109,6 +130,7 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
                 display: "flex",
                 justifyContent: "space-between",
                 flexDirection: "column",
+                pb: "10px",
               }}
             >
               <label htmlFor="confirmPassword">Confirm password</label>

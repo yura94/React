@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { count } from "console";
 
 interface cocktailsType {
   id: number;
@@ -18,7 +17,7 @@ const cocktailsSlice = createSlice({
   initialState,
   reducers: {
     fetchCocktails(state, action: PayloadAction<cocktailsType[]>) {
-      state.push(...action.payload);
+      return (state = action.payload);
     },
     increment: (state: cocktailsType[], action: PayloadAction<number>) => {
       state.map((el) =>

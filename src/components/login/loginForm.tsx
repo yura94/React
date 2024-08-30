@@ -1,13 +1,23 @@
-import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Box, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { fetchUserByEmail } from "../../store/usersSlice";
 
 interface LoginFormProps {
-  onLogin: (token: string) => void;
+  onLogin: () => void;
 }
 
+type DataType = {
+  id: number;
+  name: string;
+  email: string;
+};
+
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string().required("Required"),
@@ -18,7 +28,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
       email: e.email,
       password: e.password,
     };
-    console.log("e", e);
     try {
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
@@ -31,7 +40,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        onLogin(data.token);
+        console.log("response ok");
+        const userName = await fetch(
+          `http://localhost:5000/userByEmail?email=${loginData.email}`
+        );
+
+        const data = await userName.json();
+        console.log("data", data);
+        const userData = {
+          email: data[0].email,
+          name: data[0].name,
+        };
+
+        dispatch(fetchUserByEmail(userData));
+
+        onLogin();
       } else {
         alert("Login failed: " + data.message);
       }
@@ -67,7 +90,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             handleSubmit(values);
           }}
         >
-          <Form>
+          <Form style={{ width: "400px" }}>
             <Box
               sx={{
                 display: "flex",
@@ -86,6 +109,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 display: "flex",
                 justifyContent: "space-between",
                 flexDirection: "column",
+                pb: "10px",
               }}
             >
               <label htmlFor="password">Password</label>
